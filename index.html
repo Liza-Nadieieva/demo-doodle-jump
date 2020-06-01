@@ -1,0 +1,246 @@
+<body>
+	<div id='zone'>
+		<img src="./logo.png" class="js-img">
+		<img src="./spring.png" class='js-spring'>
+		<img src="./trampl.png" class='js-tramplin'>
+	</div>
+</body>
+<style>
+	.js-img{
+		width: 40px;
+		height: 40px;
+	}
+	#zone{
+		background: url('https://d14nx13ylsx7x8.cloudfront.net/lesson_images/images/000/001/443/original/temp1406589445.png');
+	}
+</style>
+<script>
+	var zone = document.getElementById('zone');
+	zone.style.width = '450px';
+	zone.style.height = '600px';
+	zone.style.border = '1px solid black';
+
+	var tramplin = document.getElementsByClassName('js-tramplin')[0];
+	tramplin.style.width = '50px';
+	tramplin.style.height = '30px';
+	tramplin.style.marginTop = '550px';
+	tramplin.style.marginLeft = '330px';
+	tramplin.style.position ='absolute';
+
+	var floor = document.createElement('div');
+	floor.style.width ='450px';
+	floor.style.height = '20px';
+	floor.style.background = '#7EBF2C';
+	floor.style.boxShadow = 'inset 0 0 20px 0px green';
+	floor.style.marginTop = '580px';
+	floor.style.outline = '1px solid black';
+	floor.style.position = 'absolute';
+	floor.style.zIndex ='1';
+	zone.appendChild(floor);
+
+	var player = document.getElementsByClassName('js-img')[0];
+	player.style.marginTop ='100px';
+	player.style.marginLeft = '0';
+	player.style.zIndex = '10';
+	player.style.position = 'absolute';
+
+	var spring = document.getElementsByClassName('js-spring')[0];
+	spring.style.width = '30px';
+	spring.style.height = '30px';
+	spring.style.position ='absolute';
+
+	var spring_size = 30;
+	spring.style.marginLeft = '100px';
+	spring.style.marginTop = '550px';
+
+	var player_size = parseInt(getComputedStyle(player).height);
+	var speed = 0;
+	var interval = setInterval(function(){
+	var mt = parseInt(player.style.marginTop);
+	var floor_mt = parseInt(floor.style.marginTop);
+	var floor_height = parseInt(floor.style.height);
+
+	if (mt > floor_mt - (player_size + floor_height)){
+		player.style.marginTop = (floor_mt - player_size) + 'px';
+		clearInterval(interval);
+		jump()
+	} else {
+		player.style.marginTop = (mt + speed) +'px';
+		}
+		speed += 2
+	}, 50)
+
+	var green_platforms = [];
+	var platform_size = 80;
+	var platform_height = 40;
+
+	function createPlatformGreen(margin_top){
+		var pl_green = document.createElement('div');
+		pl_green.style.width = '80px';
+		pl_green.style.height = '20px';
+		pl_green.style.borderBottomRightRadius = '25px';
+		pl_green.style.borderTopLeftRadius = '20px';
+		pl_green.style.borderTopRightRadius = '5px';
+		pl_green.style.borderBottomLeftRadius ='10px';
+		pl_green.style.background = '#7EBF2C';
+		pl_green.style.border = '1px solid black';
+		pl_green.style.marginTop = margin_top + 'px';
+		pl_green.style.marginLeft ='0';
+		pl_green.style.boxShadow = 'inset 0 0 20px 0px green';
+		pl_green.style.position = 'absolute';
+		zone.appendChild(pl_green);
+		pl_green.style.marginLeft = Math.random() * (parseInt(zone.style.width) - platform_size) +'px';
+		//pl_green.style.marginTop = Math.random() * (parseInt(zone.style.height) - parseInt(spring.style.height) - parseInt(floor.style.height) - parseInt(tramplin.style.height)) +'px';
+		green_platforms.push(pl_green);
+	}
+
+	var blue_platforms = []
+	function createPlatformBlue(margin_top){
+		var pl_blue = document.createElement('div');
+		pl_blue.style.width = '80px';
+		pl_blue.style.height = '20px';
+		pl_blue.style.borderBottomRightRadius = '25px';
+		pl_blue.style.borderTopLeftRadius = '20px';
+		pl_blue.style.borderTopRightRadius = '5px';
+		pl_blue.style.borderBottomLeftRadius ='10px';
+		pl_blue.style.background = '#009AC5';
+		pl_blue.style.border = '1px solid black';
+		pl_blue.style.marginTop = margin_top + 'px';
+		pl_blue.style.marginLeft ='0';
+		pl_blue.style.boxShadow = 'inset 0 0 20px 0px blue';
+		pl_blue.style.position = 'absolute';
+		pl_blue.dataDirection = Math.random() > 0.5 ? 'right' : 'left'
+		zone_width = parseInt(zone.style.width);
+		zone.appendChild(pl_blue);
+		pl_blue.style.marginLeft = Math.random() * (parseInt(zone.style.width) - platform_size) +'px'
+		//pl_blue.style.marginTop = Math.random() * (parseInt(zone.style.height) - parseInt(spring.style.height) - parseInt(floor.style.height) - parseInt(tramplin.style.height)) +'px'
+
+		blue_platforms.push(pl_blue)
+	}
+
+	var blue_speed = 10;
+
+	setInterval( function(){
+		for (var i = blue_platforms.length - 1; i >= 0; i--) {
+			var blue_direction = blue_platforms[i].dataDirection
+			var pl_blue_ml = parseInt(blue_platforms[i].style.marginLeft);
+			if (blue_direction == "right"){
+				blue_platforms[i].style.marginLeft = (pl_blue_ml + blue_speed) + 'px';
+			}
+			if (blue_direction =='left'){
+				blue_platforms[i].style.marginLeft = (pl_blue_ml - blue_speed) + 'px';
+			}
+
+			if (pl_blue_ml + platform_size + blue_speed >= zone_width){
+				blue_platforms[i].dataDirection = "left"
+			}
+			if (pl_blue_ml - blue_speed<= 0 ) {
+				blue_platforms[i].dataDirection = "right"
+			}
+		}
+	}, 50)
+
+	for(var i = parseInt(zone.style.height) - 100; i > 0; i -= 50){
+		if (Math.random() < 0.2) continue;
+		Math.random() > 0.3 ? createPlatformGreen(i) : createPlatformBlue(i);
+	}
+
+
+
+	function jump(custom_spd){
+		var floor_mt = parseInt(floor.style.marginTop);
+		var spd = custom_spd || -30;
+
+		var interval = setInterval(function(){
+			var mt = parseInt(player.style.marginTop);
+			var ml = parseInt(player.style.marginLeft);
+			var t_mt = parseInt(tramplin.style.marginTop);
+			var t_ml = parseInt(tramplin.style.marginLeft);
+			var tramplin_size = 50;
+
+			spd += 2
+			if (mt + player_size + spd > t_mt && ml + player_size / 2 > t_ml && ml < t_ml + tramplin_size){
+				player.style.marginTop = (t_mt - player_size + 10) + 'px';
+				clearInterval(interval);
+				backFlip()
+				jump(-45);
+				return;
+			}
+
+		for (var i = blue_platforms.length - 1; i >= 0; i--) {
+			if (spd > 0 && mt + player_size + spd > parseInt(blue_platforms[i].style.marginTop) && mt + player_size + spd < parseInt(blue_platforms[i].style.marginTop) + platform_height && ml + player_size / 2 > parseInt(blue_platforms[i].style.marginLeft) && ml < parseInt(blue_platforms[i].style.marginLeft) + platform_size){
+					player.style.marginTop = (parseInt(blue_platforms[i].style.marginTop) - player_size + 10) + 'px';
+					clearInterval(interval)
+					jump(-25)
+					return;
+			}
+		}	
+
+		if (mt + player_size + spd > parseInt(spring.style.marginTop) && ml + player_size / 2 > parseInt(spring.style.marginLeft) && ml < parseInt(spring.style.marginLeft) + spring_size){
+			player.style.marginTop = (parseInt(spring.style.marginTop) - player_size + 10) + 'px';
+			clearInterval(interval);
+			jump(-35);
+			return;
+		}
+
+		for (var i = green_platforms.length - 1; i >= 0; i--) {
+			if (spd > 0 && mt + player_size + spd > parseInt(green_platforms[i].style.marginTop) && mt + player_size + spd < parseInt(green_platforms[i].style.marginTop) + platform_height && ml + player_size / 2 > parseInt(green_platforms[i].style.marginLeft) && ml < parseInt(green_platforms[i].style.marginLeft) + platform_size){
+				player.style.marginTop = (parseInt(green_platforms[i].style.marginTop) - player_size + 10) + 'px';
+				clearInterval(interval)
+				jump(-25)
+				return;
+			}
+		}
+		if (mt + player_size + spd > floor_mt){
+			player.style.marginTop = floor_mt - player_size + 10 +'px';
+			clearInterval(interval)
+			jump(-25)
+		} else {
+			player.style.marginTop = (mt + spd) + 'px';
+		}
+	},50)
+}
+
+
+var direction = ''
+
+
+//keydown
+	document.addEventListener ('keydown', function(e){
+		var ml = parseInt(player.style.marginLeft);
+		if (e.keyCode == 39) {
+			direction = 'right';
+		} else if(e.keyCode == 37){
+			direction = 'left';
+		}
+	})
+
+	document.addEventListener('keyup', function(event){
+		direction = '';
+	})
+
+var inter = setInterval(function() {
+	var ml = parseInt(player.style.marginLeft);
+	var zone_width = parseInt(zone.style.width);
+	if (direction == 'right' && ml < zone_width - player_size){
+		player.style.marginLeft = (ml + 10) + 'px';
+	} else if(direction == 'left' && ml > 0) {
+		player.style.marginLeft = (ml - 10) + 'px';
+	}
+}, 20)
+
+
+function backFlip(){
+	var rotate_angle = 0
+	var rotate_interval =setInterval(function(){
+		rotate_angle += 10
+		player.style['transform'] ='rotate(-' + rotate_angle +'deg)'
+		if (rotate_angle == 360){
+			clearInterval(rotate_interval)
+		}
+	}, 20)
+}
+
+
+	
+</script>
